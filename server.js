@@ -3,18 +3,21 @@
 // concurrently is the package where we can use to run both FRONTEND AND BACKEND at a time
 
 
+
+
 const express = require('express')
-const mongoose = require('mongoose')
+const mongoose = require('mongoose') // it is a Mongoose Library, used to interact with MongoDb and defines schemas and models for MongoDb collections
 const devuser = require('./devusermodel')
 const reviewmodel = require('./reviewmodel')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken') //it is a library, used to create and verify JSON Web Tokens (JWT) for authentication and authorization purposes.
 const middleware = require('./middleware')
-const dotEnv = require('dotenv')
+const dotEnv = require('dotenv')  // it is dotenv library , to load environment variables from a .env file into process.env to keep sensitive information like API keys and DB credentials hidden
 //const bcrypt = require('bcryptjs'); 
 const cors = require("cors")
 const app = express()
 dotEnv.config()
-app.use(express.json()); // to handle JSON payloads
+app.use(express.json()); // it automatically parse incoming JSON data from the body of HTTP requests.
+//If you remove app.use(express.json());, the server won't be able to automatically parse the JSON data in the request body, so any attempt to access req.body (which usually holds the parsed JSON data) would return undefined.
 app.use(cors({origin:"*"})) // with passing arg *, we can use routes withOut any restrications in the frontend round
 
 app.use(express.urlencoded({ extended: true })); // to handle form data
@@ -22,8 +25,11 @@ app.use(express.urlencoded({ extended: true })); // to handle form data
 
 mongoose.connect(process.env.MONGO_URL)
 .then(()=>{
-    console.log('DB Connected Successfully')
+    console.log('MongoDB Connected Successfully')
 })
+.catch((error)=>{
+    console.log(`${error}`)
+ })
 
 app.get("/",(req,res)=>{
     res.send("Hello World!!")
@@ -84,10 +90,18 @@ app.post("/login",async (req,res)=>{
             }
         )
         //This uses the jwt.sign() method to create a JWT.
+        // it takes 4 arguments 1)payload  2) SECRET_Key  3) expiration time 4) callback function
         // The first argument is the payload created earlier.
         // The second argument is the secret key "jwtPassword" used to sign the token. This key should be stored securely (e.g., in environment variables) and not hardcoded in production.
         // The third argument is an options object specifying the expiration time of the token (here, 36000000 seconds or around 11.4 years, which is quite long for a token).
         // The final argument is a callback function, which will either return the token or handle any errors.
+
+        // Method	        Purpose	                                     Use Case
+        
+        // jwt.sign()	    Create a JWT token	                         Generate tokens for users upon login
+        // jwt.verify()	   Verify if the token is valid	              Authenticate users in protected routes
+        // jwt.decode()	   Decode the token payload without 
+        //                     verifying signature	                    Inspect token contents without authentication
 
 
     }
@@ -158,3 +172,13 @@ app.get('/myreview',middleware,async(req,res)=>{
 app.listen(5000,()=>{
     console.log('Server is started and running successfully at : 5000')
 })
+
+
+
+//status codes 
+
+//5xx series : server Errors (These codes indicate that the server encountered an error or is unable to process the request. e.g., 500 Internal Server Error)
+//4xx series : client Errors (These codes indicate that there was an issue with the client’s request.   (e.g., 400 Bad Request, 404 Not Found).)
+//3xx series : Redirection  (These codes tell the client that further action is needed to complete the request.)
+//2xx series : Success  (These codes indicate that the client's request was successfully processed by the server.)
+//1xx series : Informational Responses (These codes indicate that the request was received and understood, but the client should wait for further instructions.)
