@@ -12,6 +12,10 @@ const review = new mongoose.Schema({
     rating :{
         type: String,
         required : true
+    },
+    workReview:{
+        type:String,
+        required: true
     }
 })
 

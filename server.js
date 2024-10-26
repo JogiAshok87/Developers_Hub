@@ -138,15 +138,21 @@ app.get("/myprofile",middleware,async(req,res)=>{
 
 app.post("/addreview",middleware,async(req,res)=>{
     try{
-        const {taskworker,rating} = req.body
+        const {taskworker,rating,workReview} = req.body
+        console.log(req.body)
         const exist  = await devuser.findById(req.user.id);//Here req.user.id is extracting from the middleware
+
+        if (!exist) {
+            return res.status(404).send('User not found');
+        }
         
         const newReview = new reviewmodel({
             taskprovider : exist.fullname,
-            taskworker,rating
+            taskworker,rating,workReview
 
         })
-        newReview.save();
+        await newReview.save();
+
         return res.status(200).send('Review added successfully')
 
 
@@ -157,10 +163,16 @@ app.post("/addreview",middleware,async(req,res)=>{
 })
 
 app.get('/myreview',middleware,async(req,res)=>{
+    console.log('user Info from middleware',req.user)
     try{
-        let allreviews = await reviewmodel.find()
-        let myreviews = allreviews.filter(review=>review.taskworker.toString()===req.user.id.toString())
-        return res.status(200).json(myreviews);
+       const reviews = await reviewmodel.findById({taskworker:req.user.id})
+
+       if (reviews.length === 0) {
+        return res.status(404).send('No reviews found');
+    }
+    return res.status(200).json(reviews);
+
+       
     }
     catch(err){
         console.log(err)
