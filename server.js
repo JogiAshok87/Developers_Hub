@@ -153,7 +153,7 @@ app.post("/addreview",middleware,async(req,res)=>{
         })
         await newReview.save();
 
-        return res.status(200).send('Review added successfully')
+        return res.status(200).send({newReview,message:"Review Added successfully"})
 
 
     }catch(err){
@@ -162,23 +162,65 @@ app.post("/addreview",middleware,async(req,res)=>{
     }
 })
 
-app.get('/myreview',middleware,async(req,res)=>{
-    console.log('user Info from middleware',req.user)
-    try{
-       const reviews = await reviewmodel.findById({taskworker:req.user.id})
+// app.get('/myreview',middleware,async(req,res)=>{
+//     // console.log('user Info from middleware',req.body)
+//     // if (!req.user || !req.user.id) {
+//     //     return res.status(400).json({ message: 'User information missing' });
+//     //   }
+//     // try{
+//     //    const allreviews = await reviewmodel.findById()
+//     //    let myreview = allreviews.filter(review=>review.taskworker.toString()=== req.user.id.toString())
 
-       if (reviews.length === 0) {
-        return res.status(404).send('No reviews found');
-    }
-    return res.status(200).json(reviews);
+//     //    return res.status(200).json(myreview);
+//     // }
+//     // catch(err){
+//     //     console.log(err)
+//     //     return res.status(500).send('Server errror')
+//     // }
+//     try {
+//         console.log('User object from req.user:', req.user);
 
-       
+
+//         const reviews = await reviewmodel.find({ taskworker: req.user.fullname }); 
+//           console.log(reviews)
+          
+//           // Simplify query temporarily
+//         // console.log('All Reviews:', reviews);
+//         // const myReview = reviews.filter(
+//         //     (review) => review.taskworker.toLowerCase() === req.user.id.toLowerCase()
+//         //   );
+//         //   console.log('Filtered Reviews:', myReview);
+//         //   if (myReview.length === 0) {
+//         //     return res.status(404).json({ message: 'No reviews found for the user.' });
+//         //   }
+      
+//           res.status(200).json(reviews);
+//       } catch (error) {
+//         console.error('Error fetching reviews:', error); // Log full error
+//         res.status(500).json({ message: 'Internal Server Error', error: error.message });
+//       }
+// })
+app.get('/myreview', middleware, async (req, res) => {
+    try {
+        if (!req.user || !req.user.id) {
+            return res.status(400).json({ message: 'User information missing' });
+        }
+        console.log('User ID from req.user:', req.user);
+
+        const reviews = await reviewmodel.find({ taskworker: req.user.fullname });
+        console.log('Fetched Reviews:', reviews);
+
+        if (!reviews.length) {
+            return res.status(404).json({ message: 'No reviews found for the user.' });
+        }
+
+        res.status(200).json(reviews);
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+        res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
-    catch(err){
-        console.log(err)
-        return res.status(500).send('Server errror')
-    }
-})
+});
+
 
 
 app.listen(5000,()=>{
