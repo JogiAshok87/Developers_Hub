@@ -13,6 +13,7 @@ const devuser = new mongoose.Schema({
     mobile:{
         type: String,
         required: true,
+        maxlength:[10,"Mobile Number should not exceed 10 digits"]
     },
     skill:{
         type: String,
@@ -21,6 +22,7 @@ const devuser = new mongoose.Schema({
     password:{
         type: String,
         required: true,
+        unique:[true,"password should be unique and strong for security purpose"]
     },
     Confirmpassword:{
         type: String,

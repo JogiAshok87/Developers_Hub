@@ -1,4 +1,4 @@
-// cors : corss origin policies , it used to connect backend routes to easily accessable to frontend
+// cors : corss origin resource sharing , it used to connect backend routes to easily accessable to frontend
 
 // concurrently is the package where we can use to run both FRONTEND AND BACKEND at a time
 
@@ -200,14 +200,14 @@ app.post("/addreview",middleware,async(req,res)=>{
 //         res.status(500).json({ message: 'Internal Server Error', error: error.message });
 //       }
 // })
-app.get('/myreview', middleware, async (req, res) => {
+app.get('/myreview',middleware, async (req, res) => {
     try {
         if (!req.user || !req.user.id) {
             return res.status(400).json({ message: 'User information missing' });
         }
         console.log('User ID from req.user:', req.user);
 
-        const reviews = await reviewmodel.find({ taskworker: req.user.fullname });
+        const reviews = await reviewmodel.find({$or : [{taskworker:req.user.fullname},{taskprovider: req.user.fullname}]});
         console.log('Fetched Reviews:', reviews);
 
         if (!reviews.length) {
