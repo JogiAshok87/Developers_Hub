@@ -19,11 +19,7 @@ app.use(express.json()); // it automatically parse incoming JSON data from the b
 //If you remove app.use(express.json());, the server won't be able to automatically parse the JSON data in the request body, so any attempt to access req.body (which usually holds the parsed JSON data) would return undefined.
 // app.use(cors({ origin: "*" })); // with passing arg *, we can use routes withOut any restrications in the frontend round
 // app.use(cors({ origin: "*", credentials: true }));
-app.use(cors({
-  origin: 'http://localhost:3000', // Your frontend URL
-  methods: ['GET', 'POST', 'OPTIONS'], // Allowed methods
-  allowedHeaders: ['Content-Type', 'x-token'], // Allowed headers
-  credentials: true
+app.use(cors({ origin :"*"
 }));
 
 app.use(express.urlencoded({ extended: true })); // to handle form data
