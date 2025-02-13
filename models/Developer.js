@@ -27,10 +27,14 @@ const devuser = new mongoose.Schema({
     Confirmpassword:{
         type: String,
         required: true,
+    },
+    role:{
+        type:String,
+        default: "developer"
     }
 
 })
 
-module.exports = mongoose.model("devuser",devuser)
+module.exports = mongoose.model("Developer",devuser)
 //The  1st parameter is model name
 // The 2nd parameter is schema
